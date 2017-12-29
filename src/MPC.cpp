@@ -79,7 +79,7 @@ class FG_eval {
       fg[0] += delta_cost_weight * CppAD::pow(vars[delta_start + t], 2);
       fg[0] += a_cost_weight * CppAD::pow(vars[a_start + t], 2);
       // try adding penalty for speed + steer
-      fg[0] += 700 * CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
+      fg[0] += 200 * CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
     }
 
     // Minimize the value gap between sequential actuations.

@@ -91,6 +91,8 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double delta = j[1]["steering_angle"];
+          double a = j[1]["throttle"];
 
           /*
           * TODO: Calculate steering angle and throttle using MPC.
@@ -98,9 +100,6 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          double steer_value = j[1]["steering_angle"];
-          double throttle_value = j[1]["throttle"];
-
           vector<double> waypoints_x;
           vector<double> waypoints_y;
 
@@ -123,12 +122,33 @@ int main() {
           double cte = polyeval(coeffs, 0);  // px = 0, py = 0
           double epsi = -atan(coeffs[1]);  // p
 
+          // Center of gravity needed related to psi and epsi
+          const double Lf = 2.67;
+
+          // Latency for predicting time at actuation
+          const double dt = 0.1;
+
+          // Predict state after latency
+          // x, y and psi are all zero after transformation above
+          double pred_px = 0.0 + v * dt; // Since psi is zero, cos(0) = 1, can leave out
+          const double pred_py = 0.0; // Since sin(0) = 0, y stays as 0 (y + v * 0 * dt)
+          double pred_psi = 0.0 + v * -delta / Lf * dt; // change of sign because turning left is negative in simulator but positive for MPC
+          double pred_v = v + a * dt;
+          double pred_cte = cte + v * sin(epsi) * dt;
+          double pred_epsi = epsi + v * -delta / Lf * dt;
+
+          // Feed in the predicted state values
           Eigen::VectorXd state(6);
-          state << 0, 0, 0, v, cte, epsi;
+          state << pred_px, pred_py, pred_psi, pred_v, pred_cte, pred_epsi;
+
+          // Solve for new actuations (and to show predicted x and y in the future)
           auto vars = mpc.Solve(state, coeffs);
 
-          steer_value = vars[0];
-          throttle_value = vars[1];
+          // Calculate steering and throttle
+          // Steering must be divided by deg2rad(25) to normalize within [-1, 1].
+          // Multiplying by Lf takes into account vehicle's turning ability
+          double steer_value = vars[0] / (deg2rad(25) * Lf);
+          double throttle_value = vars[1];
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
