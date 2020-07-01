@@ -1,4 +1,5 @@
-# CarND-Controls-MPC
+# MPC-Controller
+
 Self-Driving Car Engineer Nanodegree Program
 
 ---
