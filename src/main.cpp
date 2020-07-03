@@ -140,6 +140,13 @@ int main() {
 
           //********************************************************************
           // Get current error estimates
+          // - cte:
+          //   The cross track error is calculated by evaluating at polynomial at x, f(x)
+          //   and subtracting y.
+          // - epsi:
+          //   Current heading error epsi is the tangent to the road curve at x
+          //   epsi = arctan(f') where f' is the derivative of the fitted polynomial
+          //   f' = coeffs[1] + 2.0*coeffs[2]*x + 3.0*coeffs[3]*x*x
           //********************************************************************
           double cte = polyeval(coeffs, 0);  // px = 0, py = 0
           double epsi = -atan(coeffs[1]);  // p
