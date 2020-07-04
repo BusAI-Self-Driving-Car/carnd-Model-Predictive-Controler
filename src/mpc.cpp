@@ -42,6 +42,7 @@ public:
     const int v_cost_weight = 1;
     const int delta_cost_weight = 5;
     const int a_cost_weight = 5;
+    const int v_delta_cost_weight = 200;
     const int delta_change_cost_weight = 200;
     const int a_change_cost_weight = 10;
 
@@ -57,7 +58,7 @@ public:
       fg[0] += delta_cost_weight * CppAD::pow(m_vars[delta_start + t], 2);
       fg[0] += a_cost_weight * CppAD::pow(m_vars[a_start + t], 2);
       // try adding penalty for speed + steer
-      fg[0] += 200 * CppAD::pow(m_vars[delta_start + t] * m_vars[v_start + t], 2);
+      fg[0] += v_delta_cost_weight * CppAD::pow(m_vars[delta_start + t] * m_vars[v_start + t], 2);
     }
 
     // Minimize the value gap between sequential actuations.

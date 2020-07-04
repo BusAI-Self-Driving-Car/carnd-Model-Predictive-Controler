@@ -126,7 +126,7 @@ int main() {
           auto coeffs = polyfit(waypoints_x_eig, waypoints_y_eig, ORDER);
 
           //********************************************************************
-          // Get the referece line points using the polunomial to display
+          // Get the referece line points using the polynomial to display
           //********************************************************************
           vector<double> next_x_vals;
           vector<double> next_y_vals;
